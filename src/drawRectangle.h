@@ -22,7 +22,7 @@ bool isInsideRectangle(int x, int y, int x0, int y0, int x1, int y1, int x2, int
 
 // establecer un píxel en el framebuffer
 void setPixel(int px, int py, const Color& color) {
-    Fragment f = {px, py, 0, color};
+    Fragment f = {static_cast<uint16_t>(px), static_cast<uint16_t>(py), 0, color};
     point(f);
 }
 
