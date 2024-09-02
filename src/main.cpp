@@ -2,6 +2,9 @@
 #include <omp.h>
  #include <sstream>
 #include "framebuffer.h"
+#include "circle.h"
+#include "drawRectangle.h"
+#include "pendulum.h"
 
 Uint32 frameStart, frameTime;
 
@@ -39,11 +42,43 @@ int main(int argv, char** args)
     bool running = true;
     SDL_Event event;
 
+    int pivotX = 400;
+    int pivotY = 300;
+
+    // Crear un círculo en el pivote
+    Circle pivotCircle(pivotX, pivotY, 10, {255, 255, 255});
+
+    Pendulum pendulum(pivotX, pivotY, 300, PI / 2 + 10, 20, Color(255, 0, 0));
+
+    float deltaTime = 1;
+
     while (running)
     {
         frameStart = SDL_GetTicks();
 
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
+                running = false;
+            }
+        
+        }
+
         clear();
+
+
+
+
+
+        // Dibujar el círculo
+        pivotCircle.draw();
+
+
+        //drawFilledRectangle(100, 100, 200, 200, 50, {255, 0, 0});
+
+        pendulum.updatePhysics(deltaTime);
+        pendulum.draw();
 
          renderBuffer(renderer);
 

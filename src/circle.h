@@ -1,3 +1,4 @@
+#pragma once
 #include "color.h"
 #include "fragment.h"
 #include "framebuffer.h"
@@ -35,7 +36,7 @@ public:
         }
     }
 
-private:
+protected:
     int x, y;        // Centro del círculo
     int radius;
     Color color;
