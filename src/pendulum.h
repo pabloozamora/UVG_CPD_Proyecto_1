@@ -1,10 +1,13 @@
 #pragma once
 #include "circle.h"
 #include <cmath>
+#include "drawRectangle.h"
 
 // Definiciones de constantes
 const float GRAVITY = 9.8f;
 const float PI = 3.14159265f;
+const Color ROPE_COLOR = {255, 255, 255};
+const int ROPE_WIDTH = 2;
 
 class Pendulum : public Circle {
 public:
@@ -31,8 +34,18 @@ public:
         updatePosition();
     }
 
-private:
-    int pivotX, pivotY;          // Posición del pivote del péndulo
+        void draw() {
+            
+            // Dibujar rectángulo desde el circulo hasta el pivote (cuerda)
+            drawFilledRectangle(pivotX, pivotY, x, y, ROPE_WIDTH, ROPE_COLOR);
+
+            // Dibujar circulo
+            Circle::draw();
+
+        }
+
+    private:
+        int pivotX, pivotY;          // Posición del pivote del péndulo
     float length;                // Longitud del péndulo
     float angle;                 // Ángulo actual del péndulo
     float angularVelocity;       // Velocidad angular
