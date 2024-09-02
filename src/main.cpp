@@ -3,7 +3,6 @@
  #include <sstream>
 #include "framebuffer.h"
 #include "circle.h"
-#include "drawRectangle.h"
 #include "pendulum.h"
 
 Uint32 frameStart, frameTime;
@@ -49,8 +48,12 @@ int main(int argv, char** args)
     Circle pivotCircle(pivotX, pivotY, 10, {255, 255, 255});
 
     Pendulum pendulum(pivotX, pivotY, 300, PI / 2 + 10, 20, Color(255, 0, 0));
+    Pendulum pendulum2(pivotX, pivotY, 350, PI / 2 + 10.5, 20, Color(0, 255, 0));
+    Pendulum pendulum3(pivotX, pivotY, 200, PI / 2 - 1, 20, Color(0, 0, 255));
 
-    float deltaTime = 1;
+
+
+    float deltaTime = 1.5;
 
     while (running)
     {
@@ -80,7 +83,13 @@ int main(int argv, char** args)
         pendulum.updatePhysics(deltaTime);
         pendulum.draw();
 
-         renderBuffer(renderer);
+        pendulum2.updatePhysics(deltaTime);
+        pendulum2.draw();
+
+        pendulum3.updatePhysics(deltaTime);
+        pendulum3.draw();
+
+        renderBuffer(renderer);
 
         // Present the frame buffer to the screen
         SDL_RenderPresent(renderer);
