@@ -10,7 +10,6 @@ const int FRAMEBUFFER_HEIGHT = 800;
 const int FRAMEBUFFER_SIZE = FRAMEBUFFER_WIDTH * FRAMEBUFFER_HEIGHT;
 
 Color framebuffer[FRAMEBUFFER_SIZE];
-std::array<float, FRAMEBUFFER_SIZE> zbuffer;
 
 
 Color clearColor = {0, 0, 0};
@@ -22,7 +21,6 @@ void clear() {
         
         framebuffer[i] = clearColor;
     }
-    std::fill(zbuffer.begin(), zbuffer.end(), 99999.0f);
 }
 
 void point(Fragment f)
@@ -30,10 +28,9 @@ void point(Fragment f)
     int index = f.y * FRAMEBUFFER_WIDTH + f.x;
 
     // Verificar si el índice está dentro de la pantalla
-    if (index >= 0 && index < FRAMEBUFFER_SIZE && f.z < zbuffer[index])
+    if (index >= 0 && index < FRAMEBUFFER_SIZE)
     {
         // Colocar color del pixel (x,y)
         framebuffer[index] = f.color;
-        zbuffer[index] = f.z;
     }
 }
