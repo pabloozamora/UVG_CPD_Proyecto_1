@@ -1,11 +1,29 @@
 #include <SDL2/SDL.h>
 #include <omp.h>
- #include <sstream>
+#include <sstream>
 #include "framebuffer.h"
 #include "circle.h"
 #include "pendulum.h"
+#include <vector>
+#include <SDL2/SDL_log.h>
+#include <map>
 
 Uint32 frameStart, frameTime;
+
+// Constantes
+int N = 100;  // Cantidad de péndulos
+float RADIUS = 10;  // Radio de los péndulos
+
+// Parámetros de los péndulos
+int maxSameLength = 3;  // Máxima cantidad de péndulos con la misma longitud
+float length = 150;  // Longitud inicial de los péndulos
+float lenghtIncrement = 10;  // Incremento de longitud
+
+// Crear un mapa para almacenar los colores asociados a cada longitud
+std::map<float, Color> lengthColorMap;
+
+// Crear un vector para almacenar los péndulos
+std::vector<Pendulum> pendulums;
 
 void renderBuffer(SDL_Renderer *renderer)
 {
@@ -41,19 +59,38 @@ int main(int argv, char** args)
     bool running = true;
     SDL_Event event;
 
-    int pivotX = 400;
-    int pivotY = 300;
+    int pivotX = WINDOW_WIDTH / 2;
+    int pivotY = WINDOW_HEIGHT / 4;
 
     // Crear un círculo en el pivote
     Circle pivotCircle(pivotX, pivotY, 10, {255, 255, 255});
 
-    Pendulum pendulum(pivotX, pivotY, 300, PI / 2 + 10, 20, Color(255, 0, 0));
-    Pendulum pendulum2(pivotX, pivotY, 350, PI / 2 + 10.5, 20, Color(0, 255, 0));
-    Pendulum pendulum3(pivotX, pivotY, 200, PI / 2 - 1, 20, Color(0, 0, 255));
+    int currentLengthCount = 0;
+
+    for (int i = 0; i < N; ++i) {
+        if (currentLengthCount >= maxSameLength) {
+            length += lenghtIncrement;  // Incrementar la longitud después de maxSameLength péndulos
+            currentLengthCount = 0;  // Reiniciar el contador
+        }
+
+        // Verificar si ya existe un color asignado para esta longitud
+        if (lengthColorMap.find(length) == lengthColorMap.end()) {
+            // Si no existe, asignar un nuevo color y guardarlo en el mapa
+            Color newColor = {static_cast<Uint8>(std::rand() % 256), static_cast<Uint8>(std::rand() % 256), static_cast<Uint8>(std::rand() % 256)};
+            lengthColorMap[length] = newColor;
+        }
+
+        // Usar el color asociado a la longitud actual
+        Color color = lengthColorMap[length];
+
+        float angle = PI / 2 + (currentLengthCount * 10 * PI) / 180;  // Diferentes ángulos para cada péndulo (en radianes)
+        pendulums.emplace_back(pivotX, pivotY, length, angle, RADIUS, color);
+
+        currentLengthCount++;  // Incrementar el contador de péndulos con la misma longitud
+    }
 
 
-
-    float deltaTime = 1.5;
+    float deltaTime = 0.2;
 
     while (running)
     {
@@ -70,24 +107,16 @@ int main(int argv, char** args)
 
         clear();
 
-
-
-
-
-        // Dibujar el círculo
+        // Dibujar el pivote
         pivotCircle.draw();
-
 
         //drawFilledRectangle(100, 100, 200, 200, 50, {255, 0, 0});
 
-        pendulum.updatePhysics(deltaTime);
-        pendulum.draw();
-
-        pendulum2.updatePhysics(deltaTime);
-        pendulum2.draw();
-
-        pendulum3.updatePhysics(deltaTime);
-        pendulum3.draw();
+        // Actualizar la física de los péndulos y dibujarlos
+        for (auto& pendulum : pendulums) {
+            pendulum.updatePhysics(deltaTime);
+            pendulum.draw();
+        }
 
         renderBuffer(renderer);
 
@@ -95,7 +124,7 @@ int main(int argv, char** args)
         SDL_RenderPresent(renderer);
 
         // Delay to limit the frame rate
-        SDL_Delay(1000 / 60);
+        SDL_Delay(100 / 60);
 
         frameTime = SDL_GetTicks() - frameStart;
 
