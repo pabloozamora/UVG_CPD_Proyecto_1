@@ -36,7 +36,7 @@ public:
         }
     }
 
-protected:
+    protected:
     int x, y;        // Centro del círculo
     int radius;
     Color color;
