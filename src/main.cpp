@@ -33,6 +33,10 @@ std::map<float, Color> lengthColorMap;
 // Crear un vector para almacenar los péndulos
 std::vector<Pendulum> pendulums;
 
+// Variables para el cálculo del tiempo promedio
+float totalRenderTime = 0;  // Tiempo total de renderizado
+int frameCount = 0;         // Número de frames procesados
+
 void renderBuffer(SDL_Renderer *renderer)
 {
     // Create a texture
@@ -124,6 +128,16 @@ int main(int argc, char** argv)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distrib(1, CUT_PROB_INV);
 
+    // Variables para medir el tiempo de generación
+    Uint32 generationStart, generationTime;
+    generationStart = SDL_GetTicks(); // Inicia la medición del tiempo de generación
+
+    // Generación de los péndulos
+    createPendulums();
+
+    generationTime = SDL_GetTicks() - generationStart; // Tiempo que tarda en generar los N péndulos
+    SDL_Log("Tiempo de generación para N = %d: %u ms", N, generationTime);
+
     while (running)
     {
         frameStart = SDL_GetTicks();
@@ -176,7 +190,12 @@ int main(int argc, char** argv)
         // Limitar la velocidad de fotogramas
         SDL_Delay(100 / 60);
 
+        // Medir el tiempo de renderizado de los N elementos en el frame actual
         frameTime = SDL_GetTicks() - frameStart;
+
+        // Sumar el tiempo del frame al total
+        totalRenderTime += frameTime;
+        frameCount++;  // Incrementar el número de frames procesados
 
         if (frameTime > 0)
         {
@@ -185,6 +204,10 @@ int main(int argc, char** argv)
             SDL_SetWindowTitle(window, titleStream.str().c_str());
         }
     }
+
+    // Al final de la ejecución, calcular el promedio de tiempo de renderizado
+    float averageRenderTime = totalRenderTime / frameCount;
+    SDL_Log("Promedio de tiempo de renderizado por frame: %f ms", averageRenderTime);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
