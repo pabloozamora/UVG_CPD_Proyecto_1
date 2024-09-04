@@ -43,10 +43,20 @@ public:
 
     // dibujar y rellenar el círculo
     void fillCircle(int cx, int cy, int x, int y) {
+        #pragma omp parallel sections
+    {
+        #pragma omp section
         drawHorizontalLine(cx - x, cx + x, cy + y);
+
+        #pragma omp section
         drawHorizontalLine(cx - x, cx + x, cy - y);
+
+        #pragma omp section
         drawHorizontalLine(cx - y, cx + y, cy + x);
+
+        #pragma omp section
         drawHorizontalLine(cx - y, cx + y, cy - x);
+    }
     }
 
     // dibujar una línea horizontal entre dos puntos en el framebuffer
@@ -57,6 +67,7 @@ public:
         x1 = std::max(0, x1);
         x2 = std::min(FRAMEBUFFER_WIDTH - 1, x2);
 
+        #pragma omp parallel for
         for (int x = x1; x <= x2; ++x) {
             setPixel(x, y);
         }

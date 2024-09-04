@@ -171,6 +171,7 @@ int main(int argc, char** argv)
             pendulums.end());
 
         // Actualizar la física de los péndulos y dibujarlos
+        #pragma omp parallel for schedule(dynamic)
         for (int i = 0; i < pendulums.size(); i++) {
 
             int random_number = distrib(gen);
