@@ -50,6 +50,11 @@ public:
         vy = -length * angularVelocity * std::sin(angle);
     }
 
+    // Determinar si el ya no está en pantalla y ha sido cortado
+    bool isOffScreen() {
+        return isRopeCut && (x < 0 || x >= FRAMEBUFFER_WIDTH || y < 0 || y >= FRAMEBUFFER_HEIGHT);
+    }
+
 private:
     int pivotX, pivotY;          // Posición del pivote del péndulo
     float length;                // Longitud del péndulo
