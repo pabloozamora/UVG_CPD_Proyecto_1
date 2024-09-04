@@ -13,9 +13,9 @@
 
 Uint32 frameStart, frameTime;
 
-// Constantes
+// Constantes por defecto
 int N = 100;  // Cantidad de péndulos
-float RADIUS = 10;  // Radio de los péndulos
+float RADIUS = 10;  // Radio de los círculos de los péndulos
 
 // Parámetros de los péndulos
 int MAX_SAME_LENGTH = 3;  // Máxima cantidad de péndulos con la misma longitud
@@ -88,8 +88,24 @@ void createPendulums() {
 
 }
 
-int main(int argv, char** args)
+int main(int argc, char** argv)
 {
+
+    // Comprobar si se pasaron argumentos para N, RADIUS y LENGTH_INCREMENT
+    if (argc > 1) {
+        N = std::atoi(argv[1]); // Convertir el primer argumento a entero para N
+    }
+    if (argc > 2) {
+        if (std::atof(argv[2]) <= 0){
+            SDL_Log("El radio debe ser mayor a 0");
+            return 1;
+        }
+        RADIUS = std::atof(argv[2]); // Convertir el segundo argumento a float para RADIUS
+    }
+    if (argc > 3) {
+        LENGTH_INCREMENT = std::atof(argv[3]); // Convertir el tercer argumento a float para LENGTH_INCREMENT
+    }
+
     // iniciar ventana sdl
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window *window = SDL_CreateWindow("Universe", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
@@ -132,8 +148,6 @@ int main(int argv, char** args)
             createPendulums();
         }
 
-        //drawFilledRectangle(100, 100, 200, 200, 50, {255, 0, 0});
-
         // Eliminar péndulos que ya no están en pantalla (NO PARALELIZAR)
         pendulums.erase(
             std::remove_if(pendulums.begin(), pendulums.end(),
@@ -156,10 +170,10 @@ int main(int argv, char** args)
 
         renderBuffer(renderer);
 
-        // Present the frame buffer to the screen
+        // Pasar el framebuffer a la ventana
         SDL_RenderPresent(renderer);
 
-        // Delay to limit the frame rate
+        // Limitar la velocidad de fotogramas
         SDL_Delay(100 / 60);
 
         frameTime = SDL_GetTicks() - frameStart;
@@ -167,7 +181,7 @@ int main(int argv, char** args)
         if (frameTime > 0)
         {
             std::ostringstream titleStream;
-            titleStream << "FPS: " << 1000.0 / frameTime; // Milliseconds to seconds
+            titleStream << "FPS: " << 1000.0 / frameTime; // Milisegundos a segundos
             SDL_SetWindowTitle(window, titleStream.str().c_str());
         }
     }
