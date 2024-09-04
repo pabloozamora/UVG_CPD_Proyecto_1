@@ -9,6 +9,11 @@
 #include <map>
 #include <random>
 #include <iostream>
+#include <cstdlib>
+#include <cerrno> 
+#include <cstring> 
+#include <optional>
+#include <climits>
 
 
 Uint32 frameStart, frameTime;
@@ -92,22 +97,99 @@ void createPendulums() {
 
 }
 
+// Conversión cadena a entero. Si es exitoso, devuelve el entero. Si no, devuelve un valor nulo.
+std::optional<int> argToInt(const char* arg, int index) {
+    char* end;
+    errno = 0;
+
+    // Convierte la cadena a número entero
+    long number = std::strtol(arg, &end, 10);
+
+    // Verifica si ocurrió un error durante la conversión
+    if (errno != 0 || *end != '\0' || number < INT_MIN || number > INT_MAX) {
+        SDL_Log("Argumento inválido, se espera un número entero en la posición %d", index);
+        return std::nullopt;
+    }
+
+    return static_cast<int>(number);
+}
+
+// Conversión cadena a float. Si es exitoso, devuelve el entero. Si no, devuelve un valor nulo.
+std::optional<float> argToFloat(const char* arg, int index) {
+    char* end;
+    errno = 0;
+
+    float number = std::strtof(arg, &end);
+
+    if (errno != 0 || *end != '\0') {
+        SDL_Log("Argumento inválido, se espera un número flotante en la posición %d", index);
+        return std::nullopt;
+    }
+
+    return number;
+}
+
 int main(int argc, char** argv)
 {
 
-    // Comprobar si se pasaron argumentos para N, RADIUS y LENGTH_INCREMENT
+    // Comprobar si se pasaron argumentos para constantes
     if (argc > 1) {
-        N = std::atoi(argv[1]); // Convertir el primer argumento a entero para N
+        std::optional<int>  res = argToInt(argv[1], 1); // Convertir el primer argumento a entero para N
+        if (!res) return -1;
+        N = *res;
     }
     if (argc > 2) {
-        if (std::atof(argv[2]) <= 0){
+
+        std::optional<float>  res = argToFloat(argv[2], 2);
+        if (!res) return -1;
+
+        if (*res <= 0){
             SDL_Log("El radio debe ser mayor a 0");
-            return 1;
+            return -1;
         }
-        RADIUS = std::atof(argv[2]); // Convertir el segundo argumento a float para RADIUS
+        RADIUS = *res; // Convertir el segundo argumento a float para RADIUS
     }
     if (argc > 3) {
-        LENGTH_INCREMENT = std::atof(argv[3]); // Convertir el tercer argumento a float para LENGTH_INCREMENT
+        std::optional<int>  res = argToInt(argv[3], 3); // Convertir el tercer argumento a entero para CUT_PROB_INV
+        if (!res) return -1;
+        CUT_PROB_INV = *res;
+        if (CUT_PROB_INV < 0){
+            SDL_Log("El inverso de la probabilidad de corte debe ser mayor o igual a 0.");
+            return -1;
+        }
+    }
+    
+    if (argc > 4) {
+        std::optional<float>  res = argToFloat(argv[4], 4); // cuarto argumento a initialLength
+        if (!res) return -1;
+
+        INITIAL_LENGTH = *res;
+        if (INITIAL_LENGTH <= 0){
+            SDL_Log("La longitud inicial debe ser mayor a 0");
+            return -1;
+        }
+    }
+
+    if (argc > 5) {
+        std::optional<int>  res = argToInt(argv[5], 5); // quinto argumento a max_same_length
+        if (!res) return -1;
+
+        MAX_SAME_LENGTH = *res;
+        if (MAX_SAME_LENGTH < 0){
+            SDL_Log("La cantidad máxima de péndulos con la misma longitud debe ser mayor o igual a 0.");
+            return -1;
+        }
+    }
+
+    if (argc > 6) {
+        std::optional<float>  res = argToFloat(argv[6], 6); // sexto argumento a length_increment
+        if (!res) return -1;
+
+        LENGTH_INCREMENT = *res;
+        if (LENGTH_INCREMENT <= 0){
+            SDL_Log("El incremento de longitud debe ser mayor a 0");
+            return -1;
+        }
     }
 
     // iniciar ventana sdl
