@@ -115,7 +115,7 @@ int main(int argv, char** args)
         //drawFilledRectangle(100, 100, 200, 200, 50, {255, 0, 0});
 
         // Actualizar la física de los péndulos y dibujarlos
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic)
         for (int i = 0; i < pendulums.size(); i++) {
             pendulums[i].updatePhysics(deltaTime);
             pendulums[i].draw();

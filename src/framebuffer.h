@@ -16,7 +16,7 @@ Color clearColor = {0, 0, 0};
 
 void clear() {
     std::srand(1);
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(static)
     for (int i = 0; i < FRAMEBUFFER_SIZE; i++) {
         int random = std::rand() % 1000;
         
