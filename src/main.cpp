@@ -67,6 +67,8 @@ int main(int argv, char** args)
 
     int currentLengthCount = 0;
 
+    SDL_Log("%d", omp_get_num_threads());
+
     for (int i = 0; i < N; ++i) {
         if (currentLengthCount >= maxSameLength) {
             length += lenghtIncrement;  // Incrementar la longitud después de maxSameLength péndulos
@@ -113,9 +115,10 @@ int main(int argv, char** args)
         //drawFilledRectangle(100, 100, 200, 200, 50, {255, 0, 0});
 
         // Actualizar la física de los péndulos y dibujarlos
-        for (auto& pendulum : pendulums) {
-            pendulum.updatePhysics(deltaTime);
-            pendulum.draw();
+        #pragma omp parallel for
+        for (int i = 0; i < pendulums.size(); i++) {
+            pendulums[i].updatePhysics(deltaTime);
+            pendulums[i].draw();
         }
 
         renderBuffer(renderer);

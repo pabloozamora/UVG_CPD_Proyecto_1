@@ -19,6 +19,9 @@ find_package(SDL2 REQUIRED PATHS "D:/SDL2/")
 # Find GLM
 find_package(glm REQUIRED PATHS "D:/glm/")
 
+# Find OpenMP
+find_package(OpenMP REQUIRED)
+
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
 )
@@ -31,5 +34,6 @@ add_executable(${PROJECT_NAME}
 # Link against SDL2 libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main SDL2::SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
 
 

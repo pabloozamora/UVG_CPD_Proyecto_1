@@ -15,7 +15,8 @@ Color framebuffer[FRAMEBUFFER_SIZE];
 Color clearColor = {0, 0, 0};
 
 void clear() {
-    std::srand(1);   
+    std::srand(1);
+    #pragma omp parallel for
     for (int i = 0; i < FRAMEBUFFER_SIZE; i++) {
         int random = std::rand() % 1000;
         
@@ -27,6 +28,7 @@ void point(Fragment f)
 {
     int index = f.y * FRAMEBUFFER_WIDTH + f.x;
 
+    
     // Verificar si el índice está dentro de la pantalla
     if (index >= 0 && index < FRAMEBUFFER_SIZE)
     {
