@@ -13,47 +13,63 @@ class Pendulum : public Circle {
 public:
     Pendulum(int pivotX, int pivotY, int length, float initialAngle, int radius, const Color& color)
         : Circle(pivotX, pivotY + length, radius, color), 
-          pivotX(pivotX), pivotY(pivotY), length(length), angle(initialAngle), angularVelocity(0), angularAcceleration(0) {
+          pivotX(pivotX), pivotY(pivotY), length(length), angle(initialAngle), angularVelocity(0), angularAcceleration(0),
+          isRopeCut(false), vx(0), vy(0){
         
-        updatePosition(); // Inicializa la posición del círculo
-    }
-
-    // Método para actualizar la física del péndulo
-    void updatePhysics(float deltaTime) {
-        // Calcula la aceleración angular basada en la gravedad y el ángulo actual
-        angularAcceleration = (-GRAVITY / length) * std::sin(angle);
-
-        // Actualiza la velocidad angular y el ángulo
-        angularVelocity += angularAcceleration * deltaTime;
-        angle += angularVelocity * deltaTime;
-
-        // Fricción para simular pérdida de energía
-        //angularVelocity *= 0.99;
-
-        // Actualiza la posición del círculo basado en el ángulo actual
         updatePosition();
     }
 
-        void draw() {
-            
-            // Dibujar rectángulo desde el circulo hasta el pivote (cuerda)
-            drawFilledRectangle(pivotX, pivotY, x, y, ROPE_WIDTH, ROPE_COLOR);
-
-            // Dibujar circulo
-            Circle::draw();
-
+    // Actualizar la física del péndulo
+    void updatePhysics(float deltaTime) {
+        if (isRopeCut) {
+            // Si la cuerda está cortada, la bola sigue una trayectoria de proyectil
+            updateProjectileMotion(deltaTime);
+        } else {
+            // Física del péndulo
+            angularAcceleration = (-GRAVITY / length) * std::sin(angle);
+            angularVelocity += angularAcceleration * deltaTime;
+            angle += angularVelocity * deltaTime;
+            updatePosition();
         }
+    }
 
-    private:
-        int pivotX, pivotY;          // Posición del pivote del péndulo
+    void draw() {
+        if (!isRopeCut) {
+            // Dibujar cuerda solo si no está cortada
+            drawFilledRectangle(pivotX, pivotY, x, y, ROPE_WIDTH, ROPE_COLOR);
+        }
+        // Dibujar circulo
+        Circle::draw();
+    }
+
+    // Método para cortar la cuerda
+    void cutRope() {
+        isRopeCut = true;
+        // Calcular las velocidades iniciales basadas en la velocidad angular en el momento del corte
+        vx = length * angularVelocity * std::cos(angle);
+        vy = -length * angularVelocity * std::sin(angle);
+    }
+
+private:
+    int pivotX, pivotY;          // Posición del pivote del péndulo
     float length;                // Longitud del péndulo
     float angle;                 // Ángulo actual del péndulo
     float angularVelocity;       // Velocidad angular
     float angularAcceleration;   // Aceleración angular
+    bool isRopeCut;              // Indica si la cuerda está cortada
+    float vx, vy;                // Velocidades en x e y tras el corte de la cuerda
 
     // Actualizar la posición del círculo basado en el ángulo actual del péndulo
     void updatePosition() {
         x = pivotX + length * std::sin(angle);
         y = pivotY + length * std::cos(angle);
+    }
+
+    // Actualizar el movimiento del proyectil después de cortar la cuerda
+    void updateProjectileMotion(float deltaTime) {
+        // Ecuaciones del movimiento proyectil
+        x += vx * deltaTime;
+        vy += GRAVITY * deltaTime;
+        y += vy * deltaTime;
     }
 };

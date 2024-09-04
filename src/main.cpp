@@ -7,6 +7,9 @@
 #include <vector>
 #include <SDL2/SDL_log.h>
 #include <map>
+#include <random>
+#include <iostream>
+
 
 Uint32 frameStart, frameTime;
 
@@ -18,6 +21,7 @@ float RADIUS = 10;  // Radio de los péndulos
 int maxSameLength = 3;  // Máxima cantidad de péndulos con la misma longitud
 float length = 150;  // Longitud inicial de los péndulos
 float lenghtIncrement = 10;  // Incremento de longitud
+int cut_prob_inv = 1000;  // Probabilidad inversa de cortar la cuerda
 
 // Crear un mapa para almacenar los colores asociados a cada longitud
 std::map<float, Color> lengthColorMap;
@@ -94,6 +98,11 @@ int main(int argv, char** args)
 
     float deltaTime = 0.2;
 
+    // Generador de nums aleatorios con distribución uniforme
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(1, cut_prob_inv);
+
     while (running)
     {
         frameStart = SDL_GetTicks();
@@ -117,6 +126,12 @@ int main(int argv, char** args)
         // Actualizar la física de los péndulos y dibujarlos
         #pragma omp parallel for schedule(dynamic)
         for (int i = 0; i < pendulums.size(); i++) {
+
+            int random_number = distrib(gen);
+            if(random_number == 1) {
+                pendulums[i].cutRope();
+            }
+
             pendulums[i].updatePhysics(deltaTime);
             pendulums[i].draw();
         }
