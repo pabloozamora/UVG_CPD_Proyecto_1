@@ -25,14 +25,14 @@ public:
             // Si la cuerda está cortada, la bola sigue una trayectoria de proyectil
             updateProjectileMotion(deltaTime);
         } else {
+
+            if(std::fabs(angle / PI - std::round(angle / PI)) < 1e-16) {
+                angle -= 0.2;
+            }
+            
             // Física del péndulo
             angularAcceleration = (-GRAVITY / length) * std::sin(angle);
             angularVelocity += angularAcceleration * deltaTime;
-
-            // Evitar que se quede congelado hasta arriba
-            if (std::abs(angularVelocity) < 0.001f) {
-                angularVelocity = 0.1;
-            }
             
             angle += angularVelocity * deltaTime;
             updatePosition();
