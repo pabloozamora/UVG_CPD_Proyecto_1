@@ -6,6 +6,6 @@
 struct Fragment {
   uint16_t x;      
   uint16_t y;
-  double z;
+  int z;
   Color color; 
 };

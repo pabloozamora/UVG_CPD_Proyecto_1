@@ -22,16 +22,16 @@ bool isInsideRectangle(int x, int y, int x0, int y0, int x1, int y1, int x2, int
 }
 
 // establecer un píxel en el framebuffer
-void setPixel(int px, int py, const Color& color) {
+void setPixel(int px, int py, int pz, const Color& color) {
     if (px < 0 || px >= FRAMEBUFFER_WIDTH || py < 0 || py >= FRAMEBUFFER_HEIGHT) {
         return; // No dibujar fuera de los límites
     }
-    Fragment f = {static_cast<uint16_t>(px), static_cast<uint16_t>(py), 0, color};
+    Fragment f = {static_cast<uint16_t>(px), static_cast<uint16_t>(py), pz, color};
     point(f);
 }
 
 // dibujar un rectángulo relleno
-void drawFilledRectangle(int x1, int y1, int x2, int y2, int width, const Color& color) {
+void drawFilledRectangle(int x1, int y1, int x2, int y2, int z, int width, const Color& color) {
     // Calcular la distancia entre los dos puntos
     float dx = x2 - x1;
     float dy = y2 - y1;
@@ -67,7 +67,7 @@ void drawFilledRectangle(int x1, int y1, int x2, int y2, int width, const Color&
         for (int x = minX; x <= maxX; x++) {
             if (x < 0 || x >= FRAMEBUFFER_WIDTH) continue; // Ignorar si x está fuera de los límites
             if (isInsideRectangle(x, y, x0, y0, x1n, y1n, x2n, y2n, x3, y3)) {
-                setPixel(x, y, color);
+                setPixel(x, y, z, color);
             }
         }
     }

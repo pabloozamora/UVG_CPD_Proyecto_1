@@ -11,8 +11,8 @@ const int ROPE_WIDTH = 2;
 
 class Pendulum : public Circle {
 public:
-    Pendulum(int pivotX, int pivotY, int length, float initialAngle, int radius, const Color& color)
-        : Circle(pivotX, pivotY + length, radius, color), 
+    Pendulum(int pivotX, int pivotY, int z, int length, float initialAngle, int radius, const Color& color)
+        : Circle(pivotX, pivotY + length,z, radius, color), 
           pivotX(pivotX), pivotY(pivotY), length(length), angle(initialAngle), angularVelocity(0), angularAcceleration(0),
           isRopeCut(false), vx(0), vy(0){
         
@@ -36,7 +36,7 @@ public:
     void draw() {
         if (!isRopeCut) {
             // Dibujar cuerda solo si no está cortada
-            drawFilledRectangle(pivotX, pivotY, x, y, ROPE_WIDTH, ROPE_COLOR);
+            drawFilledRectangle(pivotX, pivotY, x, y, z - 1, ROPE_WIDTH, ROPE_COLOR); // z - 1, cuerda atrás
         }
         // Dibujar circulo
         Circle::draw();

@@ -80,7 +80,8 @@ void createPendulums() {
         Color color = lengthColorMap[length];
 
         float angle = PI / 2 + (currentLengthCount * 10 * PI) / 180;  // Diferentes ángulos para cada péndulo (en radianes)
-        pendulums.emplace_back(pivotX, pivotY, length, angle, RADIUS, color);
+        int zPos = N - i + 1; // Primeros elementos más adelante siempre
+        pendulums.emplace_back(pivotX, pivotY, zPos, length, angle, RADIUS, color);
 
         currentLengthCount++;  // Incrementar el contador de péndulos con la misma longitud
     }
@@ -98,7 +99,7 @@ int main(int argv, char** args)
     SDL_Event event;
 
     // Crear un círculo en el pivote
-    Circle pivotCircle(pivotX, pivotY, 10, {255, 255, 255});
+    Circle pivotCircle(pivotX, pivotY, 500, 10, {255, 255, 255});
 
     float deltaTime = 0.2;
 

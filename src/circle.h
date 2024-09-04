@@ -6,8 +6,8 @@
 class Circle {
 public:
 
-    Circle(int x, int y, int radius, const Color& color)
-        : x(x), y(y), radius(radius), color(color) {}
+    Circle(int x, int y, int z, int radius, const Color& color)
+        : x(x), y(y), z(z), radius(radius), color(color) {}
 
     // Método para dibujar el círculo relleno en el framebuffer
     void draw() {
@@ -37,7 +37,7 @@ public:
     }
 
     protected:
-    int x, y;        // Centro del círculo
+    int x, y, z;        // Centro del círculo
     int radius;
     Color color;
 
@@ -64,7 +64,7 @@ public:
 
     // establecer un píxel en el framebuffer
     void setPixel(int px, int py) {
-        Fragment f = {static_cast<uint16_t>(px), static_cast<uint16_t>(py), 0.0, color};
+        Fragment f = {static_cast<uint16_t>(px), static_cast<uint16_t>(py), z, color};
         point(f);
     }
 };
