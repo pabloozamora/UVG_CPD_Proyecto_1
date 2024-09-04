@@ -43,20 +43,10 @@ public:
 
     // dibujar y rellenar el círculo
     void fillCircle(int cx, int cy, int x, int y) {
-        #pragma omp parallel sections
-    {
-        #pragma omp section
         drawHorizontalLine(cx - x, cx + x, cy + y);
-
-        #pragma omp section
         drawHorizontalLine(cx - x, cx + x, cy - y);
-
-        #pragma omp section
         drawHorizontalLine(cx - y, cx + y, cy + x);
-
-        #pragma omp section
         drawHorizontalLine(cx - y, cx + y, cy - x);
-    }
     }
 
     // dibujar una línea horizontal entre dos puntos en el framebuffer
