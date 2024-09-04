@@ -62,8 +62,10 @@ void drawFilledRectangle(int x1, int y1, int x2, int y2, int z, int width, const
     int maxX = std::max({x0, x1n, x2n, x3});
 
     // Dibujar líneas horizontales para rellenar el rectángulo
+    #pragma omp parallel for schedule(dynamic)
     for (int y = minY; y <= maxY; y++) {
         if (y < 0 || y >= FRAMEBUFFER_HEIGHT) continue; // Ignorar si y está fuera de los límites
+        #pragma omp parallel for schedule(dynamic)
         for (int x = minX; x <= maxX; x++) {
             if (x < 0 || x >= FRAMEBUFFER_WIDTH) continue; // Ignorar si x está fuera de los límites
             if (isInsideRectangle(x, y, x0, y0, x1n, y1n, x2n, y2n, x3, y3)) {

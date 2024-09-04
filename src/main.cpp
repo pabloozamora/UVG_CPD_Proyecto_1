@@ -153,8 +153,8 @@ int main(int argc, char** argv)
         std::optional<int>  res = argToInt(argv[3], 3); // Convertir el tercer argumento a entero para CUT_PROB_INV
         if (!res) return -1;
         CUT_PROB_INV = *res;
-        if (CUT_PROB_INV < 0){
-            SDL_Log("El inverso de la probabilidad de corte debe ser mayor o igual a 0.");
+        if (CUT_PROB_INV <= 0){
+            SDL_Log("El inverso de la probabilidad de corte debe ser mayor a 0.");
             return -1;
         }
     }
