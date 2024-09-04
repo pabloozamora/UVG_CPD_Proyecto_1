@@ -28,6 +28,12 @@ public:
             // Física del péndulo
             angularAcceleration = (-GRAVITY / length) * std::sin(angle);
             angularVelocity += angularAcceleration * deltaTime;
+
+            // Evitar que se quede congelado hasta arriba
+            if (std::abs(angularVelocity) < 0.001f) {
+                angularVelocity = 0.1;
+            }
+
             angle += angularVelocity * deltaTime;
             updatePosition();
         }
